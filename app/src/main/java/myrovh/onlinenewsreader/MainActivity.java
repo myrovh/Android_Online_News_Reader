@@ -15,14 +15,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        articleData.add(new Article("Test", "A test article", "http://www.abc.net.au/news/image/7348154-3x4-940x1253.jpg"));
+        articleData.add(new Article("Test", "A test article", "http://www.abc.net.au/news/image/2625268-1x1-1400x1400.jpg"));
+        articleData.add(new Article("Test2", "A test article", "http://www.duckychannel.com.tw/en/images/index/banner/Ducky_One-nonbacklit.jpg"));
 
         ArticleAdapter adapter = new ArticleAdapter(articleData);
         RecyclerView articleRecyclerView = (RecyclerView) findViewById(R.id.articleRecyclerView);
         RecyclerView.LayoutManager articleLayout = new LinearLayoutManager(this);
+        articleRecyclerView.setHasFixedSize(true);
         articleRecyclerView.setLayoutManager(articleLayout);
         articleRecyclerView.setAdapter(adapter);
 
         //TODO add onClickListener for article webpage load
+
+        adapter.notifyDataSetChanged();
     }
 }
