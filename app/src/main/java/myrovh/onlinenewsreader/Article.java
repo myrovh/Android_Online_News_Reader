@@ -7,12 +7,14 @@ package myrovh.onlinenewsreader;
 public class Article {
     private String title;
     private String description;
-    private String thumbnailUri;
+    private String articleUrl;
+    private String thumbnailUrl;
 
-    public Article(String title, String description, String thumbnailUri) {
+    public Article(String title, String description, String articleUrl, String thumbnailUrl) {
         this.title = title;
         this.description = description;
-        this.thumbnailUri = thumbnailUri;
+        this.articleUrl = articleUrl;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public String getTitle() {
@@ -31,11 +33,19 @@ public class Article {
         this.description = description;
     }
 
-    public String getThumbnailUri() {
-        return thumbnailUri;
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
     }
 
-    public void setThumbnailUri(String thumbnailUri) {
-        this.thumbnailUri = thumbnailUri;
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public String getArticleUrl() {
+        return articleUrl;
+    }
+
+    public void setArticleUrl(String articleUrl) {
+        this.articleUrl = articleUrl;
     }
 }
