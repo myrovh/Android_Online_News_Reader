@@ -9,11 +9,15 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
+import myrovh.onlinenewsreader.models.Item;
 import myrovh.onlinenewsreader.models.JsonFile;
+import myrovh.onlinenewsreader.models.Thumbnail;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -22,20 +26,16 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     private final OkHttpClient client = new OkHttpClient();
-    private final Gson gson = new Gson();
-    String test;
-    private JsonFile rawData; //Feed JSON data into this variable
+    private final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     private ArrayList<Article> articleData = new ArrayList<>(); //Store needed data extracted from rawData here
+    private ArticleAdapter adapter = new ArticleAdapter(articleData);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Test Data
-        articleData.add(new Article("Test", "A test article", "http://google.com", "http://www.abc.net.au/news/image/2625268-1x1-1400x1400.jpg"));
-        articleData.add(new Article("Test2", "A test article", "http://www.abc.net.au/", "http://www.duckychannel.com.tw/en/images/index/banner/Ducky_One-nonbacklit.jpg"));
-
+        //Fetch json data, load it into articleData and refresh recyclerView
         try {
             doGetRequest("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%\n" +
                     "20feed%20where%20url=%27www.abc.net.au%2Fnews%2Ffeed%2F51120%2\n" +
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Construct RecyclerView
-        ArticleAdapter adapter = new ArticleAdapter(articleData);
         RecyclerView articleRecyclerView = (RecyclerView) findViewById(R.id.articleRecyclerView);
         RecyclerView.LayoutManager articleLayout = new LinearLayoutManager(this);
         if (articleRecyclerView != null) {
@@ -82,10 +81,28 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-                test = response.body().string();
-                Log.v("JSON", test);
-                //rawData = gson.fromJson(test, JsonFile.class);
+                JsonFile rawData = gson.fromJson(response.body().charStream(), JsonFile.class);
+                convertData(rawData);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
             }
         });
+    }
+
+    void convertData(JsonFile rawData) {
+        articleData.clear();
+        List<Item> list = rawData.getQuery().getResults().getItem();
+        for (Item i : list) {
+            try {
+                Thumbnail t = i.getGroup().getThumbnail();
+                articleData.add(new Article(i.getTitle(), i.getDescription(), i.getLink(), t.getUrl()));
+            } catch (NullPointerException e) {
+                Log.e("DATABUILD", e.getMessage());
+            }
+        }
     }
 }

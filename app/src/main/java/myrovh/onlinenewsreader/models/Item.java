@@ -18,19 +18,15 @@ public class Item {
     @Expose
     private String description;
     @SerializedName("pubDate")
-    @Expose
     private String pubDate;
     @SerializedName("guid")
-    @Expose
     private Guid guid;
     @SerializedName("category")
-    @Expose
     private List<String> category = new ArrayList<String>();
     @SerializedName("group")
     @Expose
     private Group group;
     @SerializedName("creator")
-    @Expose
     private String creator;
 
     /**

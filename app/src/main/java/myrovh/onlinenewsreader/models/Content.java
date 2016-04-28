@@ -6,22 +6,17 @@ import com.google.gson.annotations.SerializedName;
 public class Content {
 
     @SerializedName("height")
-    @Expose
     private String height;
     @SerializedName("medium")
-    @Expose
     private String medium;
     @SerializedName("type")
-    @Expose
     private String type;
     @SerializedName("url")
     @Expose
     private String url;
     @SerializedName("width")
-    @Expose
     private String width;
     @SerializedName("isDefault")
-    @Expose
     private String isDefault;
 
     /**
