@@ -99,7 +99,10 @@ public class MainActivity extends AppCompatActivity {
         for (Item i : list) {
             try {
                 Thumbnail t = i.getGroup().getThumbnail();
-                articleData.add(new Article(i.getTitle(), i.getDescription(), i.getLink(), t.getUrl()));
+                String cleanDescription = i.getDescription().trim();
+                cleanDescription = cleanDescription.replaceAll("<p>", "");
+                cleanDescription = cleanDescription.replaceAll("</p>", "");
+                articleData.add(new Article(i.getTitle(), cleanDescription, i.getLink(), t.getUrl()));
             } catch (NullPointerException e) {
                 Log.e("DATABUILD", e.getMessage());
             }
