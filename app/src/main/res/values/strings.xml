@@ -4,4 +4,6 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="data_url">https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20feed%20where%20url=%27www.abc.net.au%2Fnews%2Ffeed%2F51120%2Frss.xml%27&amp;format=json</string>
+    <string name="about">About</string>
+    <string name="refresh">Refresh</string>
 </resources>

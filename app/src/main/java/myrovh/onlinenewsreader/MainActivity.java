@@ -6,10 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,13 +68,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_show_about:
+                new LibsBuilder().withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR).start(this);
+                return true;
+            case R.id.action_refresh:
+                //Fetch json data, load it into articleData and refresh recyclerView
+                try {
+                    doGetRequest("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%\n" +
+                            "20feed%20where%20url=%27www.abc.net.au%2Fnews%2Ffeed%2F51120%2\n" +
+                            "Frss.xml%27&format=json");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            default:
+                // The user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //Download json file from given url and copy relevant data into articleData
     void doGetRequest(String url) throws IOException {
         Request request = new Request.Builder().url(url).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, IOException e) {
-                // Error
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -93,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //Copies required data from the gson template files into Article objects to be used by the recycler view adapter
+    //TODO some thumbnails throw NullPointerExceptions for reasons that I don't understand, all the data is valid
     void convertData(JsonFile rawData) {
         articleData.clear();
         List<Item> list = rawData.getQuery().getResults().getItem();
